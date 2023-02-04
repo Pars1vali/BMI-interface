@@ -1,5 +1,6 @@
 from tkinter import *
-from tkinter import messagebox
+from tkinter import messagebox, ttk
+
 isLight = True
 
 def calculate_bmi():
@@ -7,6 +8,8 @@ def calculate_bmi():
     m = int(height_tf.get())/100
     bmi = kg/(m*m)
     bmi = round(bmi, 1)
+    with open("history.txt", 'a') as file:
+        file.write(str(bmi) + " " + str(kg) + " " + str(m) + "\n")
 
     if bmi < 18.5:
         messagebox.showinfo('', f'ИМТ = {bmi} соответствует недостаточному весу')
@@ -39,7 +42,35 @@ def change_color():
         btn_theme.config(text="Light theme")
         btn_theme.config(fg="black", bg="white")
 def history():
-    return 1
+    history_w = Tk()
+    history_w.title("History")
+    history_w.geometry("250x200+500+350")
+    # history_w.config(bg=baseColor)
+    # history_w.resizable(0, 0)
+
+    people = [
+        ("Tom", 38, "tom@email.com"), ("Bob", 42, "bob@email.com"), ("Sam", 28, "sam@email.com"),
+        ("Alice", 33, "alice@email.com"), ("Kate", 21, "kate@email.com"), ("Ann", 24, "ann@email.com"),
+        ("Mike", 34, "mike@email.com"), ("Alex", 52, "alex@email.com"), ("Jess", 28, "jess@email.com"),
+    ]
+
+    columns = ("name", "age", "email")
+
+    tree = ttk.Treeview(columns=columns, show="headings")
+    tree.place(fill=BOTH, expand=1)
+
+    tree.heading("name", text="Имя")
+    tree.heading("age", text="Возраст")
+    tree.heading("email", text="Email")
+
+    for person in people:
+        tree.insert("", END, values=person)
+
+    scrollbar = ttk.Scrollbar(orient=VERTICAL, command=tree.yview)
+    tree.configure(yscroll=scrollbar.set)
+    scrollbar.grid(row=0, column=1, sticky="ns")
+    history_w.mainloop()
+
 
 window = Tk()
 window.title("Калькулятор индекса массы тела (ИМТ)")
